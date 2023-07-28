@@ -237,3 +237,6 @@ If you use the new SUIM dataset, you will got this result:
 <div align="center">
     <img src="./imgs/visual_seg_2.png" alt="visual_seg_2" width=500>
 </div>
+
+## Acknowledgements
+- [SUIM dataset](https://irvlab.cs.umn.edu/resources/suim-dataset)
