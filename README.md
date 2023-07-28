@@ -178,3 +178,62 @@ However, I found there exits two problems in this dataset:
       ```
       </p>
     </details>
+
+You can use [this script](./check_masks.py) to check the original `train_val` set of SUIM. Please note that you should change `image_dir` and `masks_dir` to your own in this python script.
+
+## New SUIM Dataset
+Based on problems mentioned above, I **re-annotated** these images with improper masks. You can download the *new SUIM dataset* from [👉this link](https://drive.google.com/file/d/1XFCe0DPhRxjJZmOtyxTIxrN247YLlLaQ/view?usp=sharing).
+
+## How these improper masks impact our task
+
+To present how these improper masks impact our task, please see the instance below.
+
+If we want to extract segments of *human divers* and *Robots/instruments* from images, we can obtain two boolean masks based on colors used to label these two classes. In SUIM, the two colors is **blue** and **red**. I write a script here:
+
+```python
+from PIL import Image
+import torch
+from torchvision.utils import draw_segmentation_masks
+import numpy as np
+import matplotlib.pyplot as plt
+
+# the re-annotated SUIM
+img_fp = '/DataA/pwz/workshop/Datasets/SUIM_fix/train_val/images/d_r_59_.jpg'
+mask_fp = '/DataA/pwz/workshop/Datasets/SUIM_fix/train_val/masks/d_r_59_.bmp'
+
+# the original SUIM
+# img_fp = '/DataA/pwz/workshop/Datasets/SUIM/train_val/images/d_r_59_.jpg'
+# mask_fp = '/DataA/pwz/workshop/Datasets/SUIM/train_val/masks/d_r_59_.bmp'
+
+img_size = (256, 256)
+img = Image.open(img_fp).resize(img_size)
+img = np.asarray(img, dtype=np.uint8)
+mask = Image.open(mask_fp).resize(img_size)
+mask = np.asarray(mask, dtype=np.uint8)
+
+mask_shape = mask.shape[0:2]
+# Human Diver
+hd_mask = np.stack((np.zeros(mask_shape), np.zeros(mask_shape), np.ones(mask_shape)), axis=2)
+hd_mask = (hd_mask * 255).astype(np.uint8)
+# Robots
+ro_mask = np.stack((np.ones(mask_shape), np.zeros(mask_shape), np.zeros(mask_shape)), axis=2)
+ro_mask = (ro_mask * 255).astype(np.uint8)
+hd_boolean_mask = np.all(mask == hd_mask, axis=2)
+ro_boolean_mask = np.all(mask == ro_mask, axis=2)
+img = torch.tensor(img.transpose(2,0,1), dtype=torch.uint8)
+boolean_masks = torch.tensor(np.stack((hd_boolean_mask, ro_boolean_mask), axis=0), dtype=torch.bool)
+imgs_with_masks = [draw_segmentation_masks(img, boolean_masks, alpha=0.5, colors=['blue', 'red'])]
+show(imgs_with_masks)
+```
+
+If you use the original SUIM dataset, you will got this result:
+
+<div align="center">
+    <img src="./imgs/visual_seg_1.png" alt="visual_seg_1" width=500>
+</div>
+
+If you use the new SUIM dataset, you will got this result:
+
+<div align="center">
+    <img src="./imgs/visual_seg_2.png" alt="visual_seg_2" width=500>
+</div>
