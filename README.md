@@ -26,11 +26,11 @@ However, I found there exits two problems in this dataset:
 
     For example, magnifying these three masks files (i.e., `d_r_5_.bmp`, `f_r_1007_.bmp`, and `w_r_24_.bmp` in `train_val/masks` folder), and you can find values of colors are improper in the border between two segments and other areas. You can use **color picking tools** to check them.
 
-    ![d_r_5_](./imgs/d_r_5_.png)
-
-    ![f_r_1007_](./imgs/f_r_1007_.png)
-
-    ![w_r_24_](./imgs/w_r_24_.png)
+    <div align="center">
+      <img src="./imgs/d_r_5_.png" alt="d_r_5_" width=500>
+      <img src="./imgs/f_r_1007_.png" alt="f_r_1007_" width=500>
+      <img src="./imgs/w_r_24_.png" alt="w_r_24_" width=500>
+    </div>
 
     <details>
       <summary>The list of masks files with improper colors:</summary>
